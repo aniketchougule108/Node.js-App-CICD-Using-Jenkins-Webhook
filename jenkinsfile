@@ -30,17 +30,18 @@ pipeline {
 
         stage('Install Dependencies & Start App') {
             steps {
-                sshagent([SSH_CREDENTIAL]) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ${REMOTE_USER}@${SERVER_IP} '
-                            cd ${REMOTE_PATH} &&
-                            npm install &&
-                            pm2 start app.js --name node-app || pm2 restart node-app
-                        '
-                    """
-                }
-            }
+                   sshagent([SSH_CREDENTIAL]) {
+            sh '''
+                ssh -o StrictHostKeyChecking=no ubuntu@43.204.218.171 "
+                    cd /home/ubuntu/node-app &&
+                    npm install &&
+                    npm install pm2 --save-dev &&                  # or --save if you prefer
+                    npx pm2 start app.js --name node-app || npx pm2 restart node-app
+                "
+            '''
         }
+    }
+}
     }
 
     post {
